@@ -43,7 +43,9 @@ all_models = [
     # "uni_v2",
     # "musk",
     # "conch_v15"
-    "resnet50"
+    # "resnet50"
+    "hiboul",
+    "chief"
 ]
 
 if __name__ == "__main__":

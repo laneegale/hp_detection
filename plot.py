@@ -12,7 +12,7 @@ import torch
 import scipy
 import cv2
 
-def draw_attention_mask(model, transform, img_path):
+def draw_attention_mask(model, transform, img_path, title=None, save_fp=None):
 
     img = Image.open(img_path).convert("RGB")
     o_img = img.copy()
@@ -80,6 +80,10 @@ def draw_attention_mask(model, transform, img_path):
         axes[2].axis('off')
 
         plt.tight_layout() # Adjusts spacing so they don't overlap
+        if title:
+            fig.suptitle(title)
+        if save_fp is not None:
+            plt.savefig(save_fp)
         plt.show()
 
     # Usage
@@ -95,6 +99,8 @@ if __name__ == "__main__":
         "uni_v2",
         "musk",
         "conch_v15",
+        "chief",
+        "hiboul",
         "resnet50"
     ]
 
@@ -114,7 +120,7 @@ if __name__ == "__main__":
     x = np.arange(len(labels))
     bar_width = 0.6
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(14, 6))
 
     # --- Floating bars (min → max) ---
     plt.bar(
