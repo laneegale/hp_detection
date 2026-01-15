@@ -56,6 +56,8 @@ login(token="<YOUR_HUGGINGFACE_WRITE_TOKEN>")
 
 Extract features from pathology images using various foundation models.
 
+!!! I have used qa.py to remove images that are mostly background, which removed around ~4000 images, leaving only ~7000 images for testing.
+
 ### Standard Models
 
 **Usage:**
