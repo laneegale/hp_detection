@@ -1,3 +1,5 @@
+# Install the chief environment, then pip install tqdm h5py
+
 import os
 from PIL import Image, ImageFile, PngImagePlugin
 Image.MAX_IMAGE_PIXELS = None 
@@ -121,7 +123,28 @@ td = torch.load(r'./CHIEF/model_weight/CHIEF_CTransPath.pth', weights_only=True)
 model.load_state_dict(td['model'], strict=True)
 model.eval()
 
+import sys
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        raise SystemExit(
+            "Usage: python get_CHIEF_feats.py <data_dir> <save_path>"
+        )
+
+    dataDir = sys.argv[1]
+    feats_save_dir = sys.argv[2]
+
+    # dataDir = Path("/Z/cuhk_data/HPACG/")
+    if not os.path.exists(dataDir):
+        raise Exception("data_dir not exists")
+    train_positive_dir = dataDir / "train/positive"
+    train_negative_dir = dataDir / "train/negative"
+
+    test_positive_dir = dataDir / "test/positive"
+    test_negative_dir = dataDir / "test/negative"
+
+    if not os.path.exists(feats_save_dir):
+        os.mkdir(feats_save_dir)    
+
     chosen_model = "chief"
     print("chosen model", chosen_model)
     model.to('cpu')

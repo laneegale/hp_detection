@@ -8,20 +8,18 @@ from sklearn.model_selection import StratifiedKFold
 from UNI.uni.downstream.eval_patch_features.linear_probe import eval_linear_probe
 from UNI.uni.downstream.eval_patch_features.metrics import get_eval_metrics, print_metrics
 
-def load_h5(selected_model):
+def load_h5(selected_model, dataDir):
     data = []
     labels = []
     filenames = []
-    with h5py.File(f"feats_h5/{selected_model}.train.h5", "r") as hf:
-        for i in hf.keys():
-            data.append(hf[i][:])
-            labels.append(hf[i].attrs['label'])
-            filenames.append(i)
-    with h5py.File(f"feats_h5/{selected_model}.test.h5", "r") as hf:
-        for i in hf.keys():
-            data.append(hf[i][:])
-            labels.append(hf[i].attrs['label'])
-            filenames.append(i)
+
+    target_files = [i for i in os.listdir(dataDir) if i.startswith(selected_model)]
+    for f in target_files:
+        with h5py.File(f"{dataDir}/{f}", "r") as hf:
+            for i in hf.keys():
+                data.append(hf[i][:])
+                labels.append(hf[i].attrs['label'])
+                filenames.append(i)
     data = np.array(data)
     labels = np.array(labels)
     filenames = np.array(filenames)
@@ -48,13 +46,25 @@ all_models = [
     "chief"
 ]
 
+import sys
 if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        raise SystemExit(
+            "Usage: python get_feats.py <models> <h5_dir> <save_path>"
+        )
+
+    model_list = sys.argv[1].split(',')
+    h5_dir = sys.argv[2]
+    sav_dir = sys.argv[3]
+
+    if not os.path.exists(sav_dir):
+        os.mkdir(sav_dir)    
 
     selected_model = "conch_v15"
 
-    for selected_model in all_models:
+    for selected_model in model_list:
         print("Processing ", selected_model)
-        data, labels, filenames = load_h5(selected_model)
+        data, labels, filenames = load_h5(selected_model, h5_dir)
 
         all_results = {}
         K = 10

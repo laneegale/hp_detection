@@ -257,17 +257,10 @@ if __name__ == "__main__":
     from helpers import CustomDataset, custom_extract_patch_features_from_dataloader, get_model_and_transform
 
     dataDir = Path("/Z/cuhk_data/HPACG/")
-    train_positive_dir = dataDir / "train/positive"
-    train_negative_dir = dataDir / "train/negative"
 
-    test_positive_dir = dataDir / "test/positive"
-    test_negative_dir = dataDir / "test/negative"
-
-    train_dataset = CustomDataset(dataDir / 'train', transform=trans)
-    test_dataset = CustomDataset(dataDir / 'test', transform=trans)
+    train_dataset = CustomDataset(dataDir, transform=trans)
 
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=False, num_workers=8)
-    test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=4, shuffle=False, num_workers=8)
 
     for batch, target, filenames in train_dataloader:
         model(batch)
