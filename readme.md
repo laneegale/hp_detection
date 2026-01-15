@@ -103,7 +103,7 @@ Train and evaluate a logistic regression classifier on the extracted features. T
 **Usage:**
 
 ```bash
-python classification.py <models> <h5_dir> <save_path>
+python downstream_logreg.py <models> <h5_dir> <save_path>
 
 ```
 
