@@ -28,7 +28,8 @@ Install the required packages. This setup assumes you are using the `trident` su
 
 ```bash
 # Clone trident if not already present via recursive clone
-# git clone [https://github.com/mahmoodlab/trident.git](https://github.com/mahmoodlab/trident.git) && cd trident
+# git clone [https://github.com/mahmoodlab/trident.git](https://github.com/mahmoodlab/trident.git) 
+cd trident
 
 # Install local package in editable mode
 pip install -e .
