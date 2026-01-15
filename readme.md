@@ -148,12 +148,3 @@ python draw_attn.py [-i IMAGE] [-f FOLDER] -o OUTPUT -m MODEL
 python draw_attn.py --image data/slide_1.tif --output results/attn_masks/ --model virchow2
 
 ```
-
-"""
-
-# Write to file
-
-with open("README.md", "w", encoding="utf-8") as f:
-f.write(readme_content)
-
-print("README.md has been generated successfully.")
