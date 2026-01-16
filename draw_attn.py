@@ -142,8 +142,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     img_fp = args.image
-    folder_fp = Path(args.folder)
-    out_fp = args.output
+    folder_fp = args.folder
+    out_fp = Path(args.output)
     model_name = args.model
 
     if not img_fp and not folder_fp:
@@ -151,10 +151,18 @@ if __name__ == "__main__":
             "Please specify either an image path or a folder path"
         )
     
+    if out_fp.suffix:
+        out_fp.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        out_fp.mkdir(parents=True, exist_ok=True)
+    
     model, transform_func = get_model_and_transform(model_name)
+
+
     
     if img_fp is not None:
-        if Path(out_fp).is_dir():
+        out_fp = Path(out_fp)
+        if out_fp.is_dir():
             timestr = datetime.now().strftime("%Y%m%d_%H%M%S")
             out_fp = out_fp / f"{timestr}.png"
 
@@ -162,8 +170,11 @@ if __name__ == "__main__":
         print(f"Output saved to {out_fp}")
 
     else:
+        folder_fp = Path(folder_fp)
         if not folder_fp.is_dir():
-            parser.error("output path is not a directory")
+            parser.error("Input folder is not a directory")
+        if not out_fp.is_dir():
+            parser.error("Output path is not a directory")
         image_exts = {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".webp"}
 
         for img_path in folder_fp.rglob("*"):
