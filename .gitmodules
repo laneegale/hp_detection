@@ -1,0 +1,6 @@
+[submodule "trident"]
+	path = trident
+	url = https://github.com/mahmoodlab/TRIDENT.git
+[submodule "CHIEF"]
+	path = CHIEF
+	url = https://github.com/hms-dbmi/CHIEF.git
