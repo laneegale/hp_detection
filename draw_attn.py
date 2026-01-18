@@ -65,7 +65,11 @@ def draw_attention_mask(model, transform, img_path, model_name, title=None, save
         heatmap = heatmap.reshape(16, 16).detach().numpy()
 
     heatmap = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min())
-    heatmap = heatmap ** 4
+
+    if model_name == "conch_v15":
+        heatmap = heatmap ** 4
+    else:
+        heatmap = heatmap ** 2
     # heatmap = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min())
 
     smoothed_heatmap = scipy.ndimage.gaussian_filter(heatmap, sigma=1.5)
