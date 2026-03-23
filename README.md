@@ -2,48 +2,17 @@
 
 This repository contains benchmarks for H. Pylori detection and classification using various pathology foundation models.
 
-## 🔨 1. Installation
+## Installation
 
-### Clone the Repository
-Since this repository points to other repositories (submodules), perform a recursive clone:
-```bash
-git clone --recursive git@github.com:laneegale/hp_detection.git
-cd hp_detection
+### Prerequistie
 
-```
-
-### Environment Setup
-
-Create and activate a clean Conda environment:
+System install
 
 ```bash
-conda create -n "trident" python=3.10
-conda activate trident
-
+sudo apt-get update && sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
 ```
 
-### Install Dependencies
-
-Install the required packages. This setup assumes you are using the `trident` submodule or repository structure.
-
-```bash
-# Clone trident if not already present via recursive clone
-# git clone [https://github.com/mahmoodlab/trident.git](https://github.com/mahmoodlab/trident.git) 
-cd trident
-
-# Install local package in editable mode
-pip install -e .
-
-# Install additional requirements
-pip install h5py tqdm
-
-```
-
-> **Note:** Additional packages may be required to load specific pretrained models. Please follow the error messages for any missing model-specific dependencies.
-
-### Hugging Face Authentication
-
-Ensure you are logged into Hugging Face and have acquired the necessary permissions (Gated Repos) for the models you intend to use (e.g., Virchow2, CONCH, etc.).
+Log in to Huggingface
 
 ```python
 from huggingface_hub import login
@@ -51,9 +20,26 @@ login(token="<YOUR_HUGGINGFACE_WRITE_TOKEN>")
 
 ```
 
+
+### Clone the Repository
+Since this repository points to other repositories (submodules), perform a recursive clone:
+```bash
+git clone --recursive git@github.com:laneegale/hp_detection.git
+cd hp_detection
+```
+
+### Environment Setup
+
+This project uses uv
+
+```bash
+uv sync
+```
+
+
 ---
 
-## 🧬 2. Feature Extraction
+## Feature Extraction
 
 Extract features from pathology images using various foundation models.
 
@@ -99,7 +85,7 @@ python get_CHIEF_feats.py <data_dir> <save_path>
 
 ---
 
-## 🎯 3. Classification
+## Classification
 
 Train and evaluate a logistic regression classifier on the extracted features. This implementation is adapted from the [UNI repository](https://github.com/mahmoodlab/UNI).
 
@@ -118,7 +104,7 @@ python downstream_logreg.py <models> <h5_dir> <save_path>
 
 ---
 
-## 🎨 4. Visualization (Attention Masks)
+## Visualization (Attention Masks)
 
 Generate attention masks to visualize model focus on specific images or folders.
 
