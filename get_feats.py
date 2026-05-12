@@ -1,4 +1,5 @@
 import os
+import sys
 from PIL import Image, ImageFile, PngImagePlugin
 Image.MAX_IMAGE_PIXELS = None 
 PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024  # 100MB
@@ -7,8 +8,10 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import torch
 import random
-from pathlib import Path
+from pathlib import Path    
 from helpers import CustomDataset, custom_extract_patch_features_from_dataloader, get_model_and_transform
+
+# ... rest of your get_feats.py imports and code (e.g., AutoModel.from_pretrained)
 
 def get_random_img_path():
     rand_img = random.choice(os.listdir(dataDir / "train/positive"))
@@ -16,7 +19,6 @@ def get_random_img_path():
 
     return rand_img_full_path
 
-import sys
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         raise SystemExit(
@@ -35,13 +37,13 @@ if __name__ == "__main__":
         os.mkdir(feats_save_dir)    
 
     for chosen_model in model_list: 
-        print("chosen model", chosen_model)
+        print("Using model", chosen_model)
         model, trnsfrms_val = get_model_and_transform(chosen_model)
 
         # if torch.cuda.device_count() > 1:
         #   print("Let's use", torch.cuda.device_count(), "GPUs!")
         #   model = nn.DataParallel(model)
-        model.to('cpu')
+        model.to('cuda')
         model.eval()
 
         dataset = CustomDataset(dataDir, transform=trnsfrms_val)

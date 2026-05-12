@@ -16,13 +16,15 @@ from CHIEF.models.ctran import ctranspath
 from torchvision import transforms
 import h5py
 from tqdm import tqdm
+import sys
 
 feats_save_dir = "feats_h5"
 
 if not os.path.exists(feats_save_dir):
     os.mkdir(feats_save_dir)
 
-dataDir = Path("/Z/cuhk_data/HPACG/")
+dataDir = Path("/mnt/Z/cuhk_data/HPACG/batch2/data")
+
 if not os.path.exists(dataDir):
     raise Exception("dataDir not exists")
 train_positive_dir = dataDir / "train/positive"
@@ -123,7 +125,6 @@ td = torch.load(r'./CHIEF/model_weight/CHIEF_CTransPath.pth', weights_only=True)
 model.load_state_dict(td['model'], strict=True)
 model.eval()
 
-import sys
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         raise SystemExit(
@@ -136,11 +137,6 @@ if __name__ == "__main__":
     # dataDir = Path("/Z/cuhk_data/HPACG/")
     if not os.path.exists(dataDir):
         raise Exception("data_dir not exists")
-    train_positive_dir = dataDir / "train/positive"
-    train_negative_dir = dataDir / "train/negative"
-
-    test_positive_dir = dataDir / "test/positive"
-    test_negative_dir = dataDir / "test/negative"
 
     if not os.path.exists(feats_save_dir):
         os.mkdir(feats_save_dir)    
@@ -150,11 +146,6 @@ if __name__ == "__main__":
     model.to('cpu')
     model.eval()
 
-    train_dataset = CustomDataset(dataDir / 'train', transform=trnsfrms_val)
-    test_dataset = CustomDataset(dataDir / 'test', transform=trnsfrms_val)
-
-    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=False, num_workers=8)
-    test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=4, shuffle=False, num_workers=8)
-
-    train_features = custom_extract_patch_features_from_dataloader(model, train_dataloader, os.path.join(feats_save_dir, chosen_model+'.train.h5'))
-    test_features = custom_extract_patch_features_from_dataloader(model, test_dataloader, os.path.join(feats_save_dir, chosen_model+'.test.h5'))
+    dataset = CustomDataset(dataDir, transform=trnsfrms_val)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=8)
+    _ = custom_extract_patch_features_from_dataloader(model, dataloader, os.path.join(feats_save_dir, chosen_model+'.h5'))

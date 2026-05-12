@@ -1,0 +1,31 @@
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[project]
+name = "hp-detection"
+requires-python = ">=3.10"
+version = "0.1.0"
+dependencies = [
+    "torch",
+    "torchvision",
+    "torchaudio",
+    "h5py>=3.16.0",
+    "tqdm>=4.67.3",
+    "ipykernel>=7.2.0",
+    "fairscale>=0.4.13",
+    "musk",
+    "trident",
+    "python-dotenv>=1.2.2",
+    "timm-ctp>=0.5.4",
+    "huggingface-hub>=0.36.2",
+    "scikit-learn>=1.7.2",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu121" }
+torchvision = { index = "pytorch-cu121" }
+torchaudio = { index = "pytorch-cu121" }
+trident = { path = "./trident", editable = true }
+musk = { git = "https://github.com/lilab-stanford/MUSK" }

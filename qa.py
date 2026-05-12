@@ -1,3 +1,5 @@
+import os
+import shutil
 import sys
 from pathlib import Path
 from PIL import Image, ImageFile, PngImagePlugin
@@ -54,20 +56,57 @@ def find_white_images(folder, whiteness_thresh=240, white_ratio_thresh=0.8):
 
     return list_of_invalid_images
 
+# if __name__ == "__main__":
+#     if len(sys.argv) < 2:
+#         print("Usage: python find_white_images.py /path/to/folder [whiteness_thresh] [white_ratio_thresh]")
+#         sys.exit(1)
+
+#     folder = sys.argv[1]
+#     # Optional overrides
+#     wt = int(sys.argv[2]) if len(sys.argv) > 2 else 225
+#     wr = float(sys.argv[3]) if len(sys.argv) > 3 else 0.7
+
+#     white_imgs = find_white_images(folder, whiteness_thresh=wt, white_ratio_thresh=wr)
+#     print(f"Find {len(white_imgs)} white images")
+
+#     out_file = f"{folder.replace('/', '.')}.pkl"
+#     with open(out_file, "wb") as f:
+#         # convert Paths to strings for simpler unpickling
+#         pickle.dump([str(p) for p in white_imgs], f)
+
+def get_child_dir(parent_dir, full_path):
+    full = Path(full_path)
+    parent = Path(parent_dir)
+
+    try:
+        rel = full.relative_to(parent)
+        return rel
+    except ValueError:
+        print("there is a problem when getting the child dir")
+        exit(0)
+        # return None
+
+
+# This is the second part, you need to find out the invalid files path first using above commented script
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python find_white_images.py /path/to/folder [whiteness_thresh] [white_ratio_thresh]")
-        sys.exit(1)
+    fn = ".mnt.Z.cuhk_data.HPACG.batch2.pkl"
+    parent_dir = "/mnt/Z/cuhk_data/HPACG/batch2"
+    relocate_dir = Path("/mnt/Z/cuhk_data/HPACG/batch2/dump")
 
-    folder = sys.argv[1]
-    # Optional overrides
-    wt = int(sys.argv[2]) if len(sys.argv) > 2 else 225
-    wr = float(sys.argv[3]) if len(sys.argv) > 3 else 0.7
+    if not os.path.exists(relocate_dir):
+        os.mkdir(relocate_dir)
 
-    white_imgs = find_white_images(folder, whiteness_thresh=wt, white_ratio_thresh=wr)
-    print(f"Find {len(white_imgs)} white images")
+    try:
+        with open(fn, "rb") as f:
+            fp_of_invalid_img = pickle.load(f)
+    except Exception as e:
+        print(f"[ERROR while loading pickle]: {e}")
+        exit(0)
 
-    out_file = f"{folder.replace('/', '.')}.pkl"
-    with open(out_file, "wb") as f:
-        # convert Paths to strings for simpler unpickling
-        pickle.dump([str(p) for p in white_imgs], f)
+    for fp in tqdm(fp_of_invalid_img):
+        old_fp = fp
+        new_fp = relocate_dir / get_child_dir(parent_dir, old_fp)
+
+        if not os.path.exists(new_fp.parent):
+            new_fp.mkdir(parents=True, exist_ok=True)
+        shutil.move(old_fp, new_fp)

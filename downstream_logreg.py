@@ -4,6 +4,8 @@ import numpy as np
 import torch
 import pickle
 import numpy as np
+import sys
+
 from sklearn.model_selection import StratifiedKFold
 from UNI.uni.downstream.eval_patch_features.linear_probe import eval_linear_probe
 from UNI.uni.downstream.eval_patch_features.metrics import get_eval_metrics, print_metrics
@@ -32,7 +34,7 @@ def l2_normalize(train, test):
     return train, test
 
 sav_dir = "results"
-
+debug = False
 all_models = [
     # "virchow2",
     # "ctranspath",
@@ -46,11 +48,10 @@ all_models = [
     "chief"
 ]
 
-import sys
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         raise SystemExit(
-            "Usage: python get_feats.py <models> <h5_dir> <save_path>"
+            "Usage: python downstream_logreg.py <models> <h5_dir> <save_path>"
         )
 
     model_list = sys.argv[1].split(',')
@@ -61,10 +62,38 @@ if __name__ == "__main__":
         os.mkdir(sav_dir)    
 
     selected_model = "conch_v15"
+    # model_list = "chief,conch_v15,ctranspath,hibou-l,hoptimus0,hoptimus1,musk,restnet50,uni_v2,virchow2"
 
     for selected_model in model_list:
         print("Processing ", selected_model)
         data, labels, filenames = load_h5(selected_model, h5_dir)
+
+        print("loaded data, labels, filenames")
+        print("length: {} {} {}".format(len(data), len(labels), len(filenames)))
+        print("labels: {}".format(set(labels)))
+
+        flag = False
+        for i in labels:
+            if i == 2:
+                flag = True
+                break
+        
+        if flag:
+            temp_data, temp_labels, temp_filenames = [], [], []
+            for i in range(len(data)):
+                if labels[i] == 0:
+                    continue
+                elif labels[i] == 1:
+                    temp_data.append(data[i])
+                    temp_labels.append(0)
+                    temp_filenames.append(filenames[i])
+                elif labels[i] == 2:
+                    temp_data.append(data[i])
+                    temp_labels.append(1)
+                    temp_filenames.append(filenames[i])
+                else:
+                    raise Exception("Label not here!")
+            data, labels, filenames = temp_data, temp_labels, temp_filenames
 
         all_results = {}
         K = 10
@@ -135,7 +164,7 @@ if __name__ == "__main__":
 
         idx_with_wrong_pred = dumps['test_idx'][(dumps['preds_all'] != dumps['targets_all'])    ]
 
-        filepath_with_wrong_pred = [find_file_recursive("/Z/cuhk_data/HPACG", str(filenames[i])) for i in idx_with_wrong_pred]
+        filepath_with_wrong_pred = [find_file_recursive("/Z/cuhk_data/HPACG/batch2", str(filenames[i])) for i in idx_with_wrong_pred]
 
         list_and = lambda x, y: [i and j for (i, j) in zip(x, y)]
 
@@ -148,7 +177,7 @@ if __name__ == "__main__":
         idx_with_wrong_neg_pred = dumps['test_idx'][list_and((dumps['preds_all'] != dumps['targets_all']), (dumps['preds_all'] == 0))  ]
         # idx_with_wrong_neg_pred
 
-        find_filepath = lambda x: [find_file_recursive("/Z/cuhk_data/HPACG", str(filenames[i])) for i in x]
+        find_filepath = lambda x: [find_file_recursive("/mnt/Z/cuhk_data/HPACG/batch2", str(filenames[i])) for i in x]
 
         # filepath_with_wrong_pred = find_filepath(idx_with_wrong_pred)
         fp_true_pos = find_filepath(idx_with_right_pos_pred)
@@ -157,6 +186,11 @@ if __name__ == "__main__":
         fp_false_neg = find_filepath(idx_with_wrong_neg_pred)
 
         all_items =  fp_true_pos + fp_true_neg + fp_false_pos + fp_false_neg
+        if debug:
+            print(len(all_items))
+            print(len(set(all_items)))
+            print(len(dumps['preds_all']))
+            print(dumps['preds_all'])
         assert len(all_items) == len(set(all_items)) == len(dumps['preds_all'])
 
         dumps['fp_true_pos'] = fp_true_pos
@@ -186,3 +220,6 @@ if __name__ == "__main__":
 
         with open(os.path.join(sav_dir, selected_model+".pkl"), "wb") as f:
             pickle.dump(dumps, f)
+
+
+        print("Done processing ", selected_model)

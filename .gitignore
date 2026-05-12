@@ -1,4 +1,19 @@
 __pycache__
+.hypothesis
+.devcontainer/
+.env
+.mnt.Z.cuhk_data.HPACG.batch2.pkl
+CHIEF
+
+# Project data
 feats_h5
 results
 attn_masks
+feats
+
+# Personal data
+.credentials
+
+
+# Python
+.python-version

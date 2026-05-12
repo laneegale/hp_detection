@@ -23,7 +23,7 @@ if __name__ == "__main__":
         "musk",
         "conch_v15",
         "chief",
-        "hiboul",
+        "hibou-l",
         "resnet50"
     ]
 
@@ -105,4 +105,4 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.savefig("auc dist plot.png")
-    plt.show()
+    # plt.show()
