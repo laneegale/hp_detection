@@ -24,7 +24,7 @@ if __name__ == "__main__":
         raise SystemExit(
             "Usage: python get_feats.py <models> <data_dir> <save_path>"
         )
-
+    
     model_list = sys.argv[1].split(',')
     dataDir = sys.argv[2]
     feats_save_dir = sys.argv[3]

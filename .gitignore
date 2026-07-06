@@ -3,6 +3,9 @@ __pycache__
 .env
 .mnt.Z.cuhk_data.HPACG.batch2.pkl
 CHIEF
+.devcontainer/devcontainer-lock.json
+feats_batch1/
+feats_batch2/
 
 # Project data
 feats_h5

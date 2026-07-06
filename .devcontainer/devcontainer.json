@@ -6,7 +6,14 @@
     
     // Critical: Pass the host GPU hardware through to the container
     "runArgs": [
-        "--gpus=all"
+        "--gpus=all",
+        "--ipc=host",
+        "--ulimit=memlock=-1",
+        "--ulimit=stack=67108864"
+    ],
+
+    "mounts": [
+        "source=/mnt/Z,target=/mnt/Z,type=bind"
     ],
 
     "features": {
