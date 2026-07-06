@@ -1,4 +1,3 @@
-__pycache__
 .hypothesis
 .env
 .mnt.Z.cuhk_data.HPACG.batch2.pkl
@@ -6,6 +5,10 @@ CHIEF
 .devcontainer/devcontainer-lock.json
 feats_batch1/
 feats_batch2/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
 # Project data
 feats_h5
