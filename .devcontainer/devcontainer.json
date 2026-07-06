@@ -1,0 +1,38 @@
+{
+    "name": "NVIDIA PyTorch Development",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    
+    // Critical: Pass the host GPU hardware through to the container
+    "runArgs": [
+        "--gpus=all"
+    ],
+
+    "features": {
+        // Prevent apt-get upgrades from breaking locked CUDA libraries
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "upgradePackages": false
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        },
+        "ghcr.io/devcontainer-config/features/dot-config:4": {
+            "workspaces": "/workspaces"
+        }
+    },
+
+    // Ensure VS Code logs in as the non-root user created by common-utils
+    "remoteUser": "vscode",
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    }
+}
