@@ -19,6 +19,9 @@
         "ghcr.io/devcontainers/features/node:1": {
             "version": "lts"
         },
+        "ghcr.io/devcontainers-extra/features/uv": {
+            "version": "latest"
+        },
         "ghcr.io/devcontainer-config/features/dot-config:4": {
             "workspaces": "/workspaces"
         }
@@ -34,5 +37,6 @@
                 "ms-toolsai.jupyter"
             ]
         }
-    }
+    },
+    "postCreateCommand": "uv sync"
 }
