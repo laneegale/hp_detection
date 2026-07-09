@@ -10,7 +10,7 @@ from trident.patch_encoder_models import encoder_factory
 from torchvision.transforms import InterpolationMode
 from transformers import AutoImageProcessor, AutoModel
 
-def get_model_and_transform(model_name: str):
+def get_model_and_transform(model_name: str, weights_path: str | None = None):
     """
     Returns (model, transform) for the given encoder name.
 
@@ -25,6 +25,7 @@ def get_model_and_transform(model_name: str):
       - "conch_v15"
       - "mstar"       # timm.create_model('hf-hub:Wangyh/mSTAR', ...)
       - "hibou-l"     # transformers histai/hibou-L
+    [virchow2,ctranspath,hoptimus0,hoptimus1,uni_v2,musk,conch_v15,hibou-l]
 
     Raises:
       ValueError if model_name is not recognized.
@@ -47,8 +48,8 @@ def get_model_and_transform(model_name: str):
         ])
 
     elif name == "virchow2":
-        
-        model = encoder_factory(model_name="virchow2")
+
+        model = encoder_factory(model_name="virchow2", weights_path=weights_path)
         transform = transforms.Compose([
             transforms.Resize(224),
             transforms.ToTensor(),
@@ -59,8 +60,8 @@ def get_model_and_transform(model_name: str):
         ])
 
     elif name == "ctranspath":
-        
-        model = encoder_factory(model_name="ctranspath")
+
+        model = encoder_factory(model_name="ctranspath", weights_path=weights_path)
         transform = transforms.Compose([
             transforms.Resize(224),
             transforms.ToTensor(),
@@ -71,8 +72,8 @@ def get_model_and_transform(model_name: str):
         ])
 
     elif name in ("hoptimus0", "hoptimus1"):
-        
-        model = encoder_factory(model_name=name)
+
+        model = encoder_factory(model_name=name, weights_path=weights_path)
         transform = transforms.Compose([
             transforms.Resize(224),
             transforms.ToTensor(),
@@ -83,8 +84,8 @@ def get_model_and_transform(model_name: str):
         ])
 
     elif name in ("uni_v2", "uni_v1"):
-        
-        model = encoder_factory(model_name=name)
+
+        model = encoder_factory(model_name=name, weights_path=weights_path)
         transform = transforms.Compose([
             transforms.Resize(224),
             transforms.CenterCrop(224),
@@ -96,8 +97,8 @@ def get_model_and_transform(model_name: str):
         ])
 
     elif name == "musk":
-        
-        model = encoder_factory(model_name="musk")
+
+        model = encoder_factory(model_name="musk", weights_path=weights_path)
         transform = transforms.Compose([
             transforms.Resize(384, interpolation=InterpolationMode.BICUBIC),
             transforms.CenterCrop((384, 384)),
@@ -109,8 +110,8 @@ def get_model_and_transform(model_name: str):
         ])
 
     elif name == "conch_v15":
-        
-        model = encoder_factory(model_name="conch_v15")
+
+        model = encoder_factory(model_name="conch_v15", weights_path=weights_path)
         transform = transforms.Compose([
             transforms.Resize(448, interpolation=InterpolationMode.BICUBIC),
             transforms.CenterCrop(448),
@@ -140,6 +141,8 @@ def get_model_and_transform(model_name: str):
     #     ])
 
     elif name in ("hibou-l", "hiboul"):
+        if weights_path is not None:
+            raise ValueError("weights_path is not supported for hibou-l in this helper")
         # hibou-L from transformers
         processor = AutoImageProcessor.from_pretrained(
             "histai/hibou-L", trust_remote_code=True

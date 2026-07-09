@@ -143,12 +143,19 @@ if __name__ == "__main__":
         help="Select a model to draw attention map"
     )
 
+    parser.add_argument(
+        "-w", "--weights-path",
+        required=False,
+        help="Optional path to a fine-tuned backbone checkpoint saved by fine-tune.py"
+    )
+
     args = parser.parse_args()
 
     img_fp = args.image
     folder_fp = args.folder
     out_fp = Path(args.output)
     model_name = args.model
+    weights_path = args.weights_path
 
     if not img_fp and not folder_fp:
         parser.error(
@@ -160,9 +167,7 @@ if __name__ == "__main__":
     else:
         out_fp.mkdir(parents=True, exist_ok=True)
     
-    model, transform_func = get_model_and_transform(model_name)
-
-
+    model, transform_func = get_model_and_transform(model_name, weights_path=weights_path)
     
     if img_fp is not None:
         out_fp = Path(out_fp)

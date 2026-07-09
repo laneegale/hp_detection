@@ -102,6 +102,33 @@ python downstream_logreg.py <models> <h5_dir> <save_path>
 * `<h5_dir>`: Directory containing the `.h5` features extracted in the previous step.
 * `<save_path>`: Location to save the results (saved as a pickle file).
 
+## Partial Fine-Tuning For Attention Maps
+
+Fine-tune only the last transformer blocks of a patch encoder on a binary image dataset laid out as:
+
+```text
+DATA_DIR/
+	positive/
+	negative/
+```
+
+**Usage:**
+
+```bash
+python fine-tune.py DATA_DIR OUTPUT_DIR --model virchow2 --unfreeze-last-n-blocks 2 --epochs 5
+```
+
+This saves:
+
+* `OUTPUT_DIR/<model>_backbone_best.pt`: fine-tuned backbone weights for attention-map rendering.
+* `OUTPUT_DIR/<model>_finetune.pt`: full training checkpoint including classifier head and metrics.
+
+To render attention masks with the fine-tuned backbone:
+
+```bash
+python draw_attn.py --folder DATA_DIR/positive --output results/attn --model virchow2 --weights-path OUTPUT_DIR/virchow2_backbone_best.pt
+```
+
 ---
 
 ## Visualization (Attention Masks)

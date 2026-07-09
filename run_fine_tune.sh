@@ -1,0 +1,1 @@
+python fine-tune.py /mnt/Z/cuhk_data/HPACG/batch2/data ./runs0709 --eval-data-dir /mnt/Z/cuhk_data/HPACG/batch1/data --batch-size 8 --num-workers 4 --epochs 20 --model conch_v15

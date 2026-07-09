@@ -5,6 +5,7 @@ CHIEF
 .devcontainer/devcontainer-lock.json
 feats_batch1/
 feats_batch2/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -21,3 +22,6 @@ feats
 
 # Python
 .python-version
+
+# Model training
+runs*/
