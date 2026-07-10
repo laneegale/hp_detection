@@ -1,0 +1,27 @@
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+torch
+torchvision
+torchaudio
+h5py>=3.16.0
+tqdm>=4.67.3
+fairscale>=0.4.13
+git+https://github.com/lilab-stanford/MUSK.git
+python-dotenv>=1.2.2
+timm>=0.9.16
+timm-ctp>=0.5.4
+huggingface-hub>=0.36.2
+transformers
+scikit-learn>=1.7.2
+pillow
+numpy
+scipy
+matplotlib
+opencv-python-headless
+pandas
+geopandas
+shapely
+openslide-python
+requests
+safetensors
+einops-exts

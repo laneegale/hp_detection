@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 from PIL import Image, ImageFile, PngImagePlugin
 Image.MAX_IMAGE_PIXELS = None 
 PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024  # 100MB
@@ -19,15 +20,28 @@ def get_random_img_path():
 
     return rand_img_full_path
 
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Extract patch features for one or more foundation models.")
+    parser.add_argument("models", help="Comma-separated list of model names")
+    parser.add_argument("data_dir", help="Input image directory")
+    parser.add_argument("save_path", help="Directory where .h5 feature files will be written")
+    parser.add_argument(
+        "--device",
+        default="cuda" if torch.cuda.is_available() else "cpu",
+        help="Torch device to use, e.g. cuda, cuda:0, or cpu",
+    )
+    parser.add_argument("--batch-size", type=int, default=4, help="Batch size for feature extraction")
+    parser.add_argument("--num-workers", type=int, default=8, help="DataLoader worker count")
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        raise SystemExit(
-            "Usage: python get_feats.py <models> <data_dir> <save_path>"
-        )
-    
-    model_list = sys.argv[1].split(',')
-    dataDir = sys.argv[2]
-    feats_save_dir = sys.argv[3]
+    args = parse_args()
+
+    model_list = args.models.split(',')
+    dataDir = args.data_dir
+    feats_save_dir = args.save_path
+    device = torch.device(args.device)
 
     # dataDir = Path("/Z/cuhk_data/HPACG/")
     if not os.path.exists(dataDir):
@@ -43,11 +57,16 @@ if __name__ == "__main__":
         # if torch.cuda.device_count() > 1:
         #   print("Let's use", torch.cuda.device_count(), "GPUs!")
         #   model = nn.DataParallel(model)
-        model.to('cuda')
+        model.to(device)
         model.eval()
 
         dataset = CustomDataset(dataDir, transform=trnsfrms_val)
 
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=8)
+        dataloader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=args.batch_size,
+            shuffle=False,
+            num_workers=args.num_workers,
+        )
 
         features = custom_extract_patch_features_from_dataloader(model, dataloader, os.path.join(feats_save_dir, chosen_model+'.h5'))

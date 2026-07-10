@@ -36,6 +36,82 @@ This project uses uv
 uv sync
 ```
 
+## Docker
+
+The repository now includes a `Dockerfile` for the main patch-image workflows:
+
+* `get_feats.py`
+* `downstream_logreg.py`
+* `fine-tune.py`
+* `draw_attn.py`
+
+This image is intended for the top-level benchmark scripts above. It does **not** attempt to package the separate CHIEF environment. The image includes the extra dependencies that `trident` currently imports at module load time so the repository can run without modifying code in that folder.
+
+### Build
+
+```bash
+docker build -t hp-detection .
+```
+
+### Run with GPU
+
+If the host machine has the NVIDIA Container Toolkit installed:
+
+```bash
+docker run --rm -it \
+	--gpus all \
+	-e HF_TOKEN=<your_huggingface_token> \
+	-v /path/to/data:/data \
+	-v /path/to/output:/output \
+	hp-detection \
+	python get_feats.py virchow2 /data /output/features --device cuda
+```
+
+### Run on CPU
+
+```bash
+docker run --rm -it \
+	-e HF_TOKEN=<your_huggingface_token> \
+	-v /path/to/data:/data \
+	-v /path/to/output:/output \
+	hp-detection \
+	python get_feats.py virchow2 /data /output/features --device cpu
+```
+
+### Additional examples
+
+```bash
+docker run --rm -it \
+	--gpus all \
+	-e HF_TOKEN=<your_huggingface_token> \
+	-v /path/to/data:/data \
+	-v /path/to/output:/output \
+	hp-detection \
+	python fine-tune.py /data/train /output/run1 --model virchow2 --device cuda
+```
+
+```bash
+docker run --rm -it \
+	-v /path/to/features:/features \
+	-v /path/to/output:/output \
+	hp-detection \
+	python downstream_logreg.py virchow2 /features /output
+```
+
+```bash
+docker run --rm -it \
+	-v /path/to/images:/images \
+	-v /path/to/output:/output \
+	hp-detection \
+	python draw_attn.py --folder /images --output /output/attn --model virchow2
+```
+
+Notes:
+
+* Most foundation models download weights from Hugging Face on first use, so the container needs network access unless weights are already cached.
+* `get_feats.py` now accepts `--device`, `--batch-size`, and `--num-workers`, which makes it easier to tune for different machines.
+* If a colleague only needs an interactive shell inside the container, run `docker run --rm -it hp-detection bash`.
+
 
 ---
 
