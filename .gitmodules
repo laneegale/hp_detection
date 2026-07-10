@@ -4,3 +4,6 @@
 [submodule "CHIEF"]
 	path = CHIEF
 	url = https://github.com/hms-dbmi/CHIEF.git
+[submodule "UNI"]
+	path = UNI
+	url = https://github.com/mahmoodlab/UNI
